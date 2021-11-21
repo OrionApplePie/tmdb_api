@@ -1,5 +1,5 @@
-from tmdb_helpers import get_user_api_key
-from tmdb_helpers import make_tmdb_api_request
+from utils import get_user_api_key
+from utils import make_tmdb_api_request
 
 if __name__ == '__main__':
     user_api_key = get_user_api_key()
