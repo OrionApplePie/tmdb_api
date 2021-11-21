@@ -1,8 +1,14 @@
 import json
+import os
 import urllib.request
 import urllib.parse
-from utils import get_user_api_key
+
+from dotenv import load_dotenv
+
 from utils import make_tmdb_api_request
+
+
+load_dotenv()
 
 def load_films(user_api_key, films_amount=1000):
     all_films = []
@@ -19,9 +25,10 @@ def load_films(user_api_key, films_amount=1000):
     return all_films
 
 if __name__ == '__main__':
-    user_api_key = get_user_api_key()
+    user_api_key = os.getenv('TMDB_API_KEY')
+
     if not user_api_key:
-        print('Invalid api key')
+        print('No API Key! Please check env variable TMDB_API_KEY!')
         raise SystemExit
     films_amount = 1000
     print('please, wait, this operation may take smth like 15-20 minutes')

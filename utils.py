@@ -1,8 +1,16 @@
-import urllib.request
-import urllib.parse
 import json
 import os
+import urllib.parse
+import urllib.request
 from getpass import getpass
+
+import requests
+from requests.compat import urljoin
+
+
+BASE_API_URL = 'https://api.themoviedb.org/3/'
+MOVIE_URL_PART = 'movie/'
+
 
 def make_tmdb_api_request(method, api_key, extra_params=None):
     extra_params = extra_params or {}
@@ -19,16 +27,31 @@ def load_json_data_from_url(base_url, url_params):
     response = urllib.request.urlopen(url).read().decode('utf-8')
     return json.loads(response)
 
-def get_user_api_key():
-    user_api_key = getpass('Enter your api key v3:')
+
+def is_valid_api_key(api_key='', film_id=0):
+    """Check is valid API key or not."""
+
+    params = {
+        'api_key': api_key,
+        'language': 'ru',
+    }
+    movie_api_url = urljoin(BASE_API_URL, MOVIE_URL_PART)
+
     try:
-        make_tmdb_api_request(method='/movie/2', api_key = user_api_key)
-        return user_api_key
-    except urllib.error.HTTPError as err:
-        if err.code == 401:
-            return None
-        else:
-            raise
+        response = requests.get(
+            url=urljoin(movie_api_url, str(film_id)),
+            params=params,
+        )
+        response.raise_for_status()
+    except requests.ConnectionError as conn_error:
+        print(f'Connection problems {conn_error}')
+    except requests.HTTPError as http_error:
+        print(f'Connection problems {http_error}')
+
+    if response.status_code == 401:
+        return False
+
+    return True
 
 
 def load_data(path):
