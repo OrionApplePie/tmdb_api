@@ -34,5 +34,6 @@ def main():
         f' budget: {test_movie_json["budget"]}'
     ))
 
+
 if __name__ == '__main__':
     main()
