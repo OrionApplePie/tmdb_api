@@ -1,8 +1,9 @@
 import os
+import sys
 
 from dotenv import load_dotenv
 
-from utils import is_valid_api_key
+from utils import get_movie
 
 load_dotenv()
 
@@ -14,16 +15,23 @@ def main():
 
     if not user_api_key:
         print('No API Key! Please check env variable TMDB_API_KEY!')
-        raise SystemExit
+        raise sys.exit(0)
 
-    if is_valid_api_key(
+    test_movie_resp = get_movie(
         api_key=user_api_key,
-        film_id=TEST_MOVIE_NUMBER
-    ):
-        print('API Key is valid and TMDB is up.')
+        movie_id=TEST_MOVIE_NUMBER
+    )
 
-    else:
-        print('Invalid API Key!')
+    if 'success' in test_movie_resp:
+        print(f'{test_movie_resp["status_message"]}')
+        sys.exit(0)
+
+    print('API Key is valid and TMDB is up.')
+    print()
+    print(
+        (f'Requested movie finded: {test_movie_resp["title"]},'
+         f' budget: {test_movie_resp["budget"]}')
+    )
 
 
 if __name__ == '__main__':

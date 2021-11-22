@@ -28,8 +28,8 @@ def load_json_data_from_url(base_url, url_params):
     return json.loads(response)
 
 
-def is_valid_api_key(api_key='', film_id=0):
-    """Check is valid API key or not."""
+def get_movie(api_key='', movie_id=0):
+    """Get json data of movie request by id."""
 
     params = {
         'api_key': api_key,
@@ -39,7 +39,7 @@ def is_valid_api_key(api_key='', film_id=0):
 
     try:
         response = requests.get(
-            url=urljoin(movie_api_url, str(film_id)),
+            url=urljoin(movie_api_url, str(movie_id)),
             params=params,
         )
         response.raise_for_status()
@@ -48,10 +48,7 @@ def is_valid_api_key(api_key='', film_id=0):
     except requests.HTTPError as http_error:
         print(f'Connection problems {http_error}')
 
-    if response.status_code == 401:
-        return False
-
-    return True
+    return response.json()
 
 
 def load_data(path):
