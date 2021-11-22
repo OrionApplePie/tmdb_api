@@ -21,18 +21,18 @@ def main():
         api_key=user_api_key,
         movie_id=TEST_MOVIE_NUMBER
     )
+    test_movie_json = test_movie_resp.json()
 
-    if 'success' in test_movie_resp:
-        print(f'{test_movie_resp["status_message"]}')
+    if test_movie_resp.status_code in [401, 404]:
+        print(f'{test_movie_json["status_message"]}')
         sys.exit(0)
 
     print('API Key is valid and TMDB is up.')
     print()
-    print(
-        (f'Requested movie finded: {test_movie_resp["title"]},'
-         f' budget: {test_movie_resp["budget"]}')
-    )
-
+    print((
+        f'Requested movie founded: {test_movie_json["title"]},'
+        f' budget: {test_movie_json["budget"]}'
+    ))
 
 if __name__ == '__main__':
     main()

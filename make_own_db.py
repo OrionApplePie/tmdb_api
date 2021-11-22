@@ -24,6 +24,7 @@ def load_films(user_api_key, films_amount=1000):
             print('%s percent complete' % str(film_id*100/ films_amount))
     return all_films
 
+
 if __name__ == '__main__':
     user_api_key = os.getenv('TMDB_API_KEY')
 
