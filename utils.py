@@ -2,14 +2,16 @@ import json
 import os
 import urllib.parse
 import urllib.request
-from getpass import getpass
 
 import requests
 from requests.compat import urljoin
 
 
+DEFAULT_LANGUAGE = 'ru'
+
 BASE_API_URL = 'https://api.themoviedb.org/3/'
 MOVIE_URL_PART = 'movie/'
+MOVIE_SEARCH_URL = BASE_API_URL + 'search/movie/'
 
 
 def make_tmdb_api_request(method, api_key, extra_params=None):
@@ -28,18 +30,18 @@ def load_json_data_from_url(base_url, url_params):
     return json.loads(response)
 
 
-def get_movie(api_key='', movie_id=0):
-    """Get json data of movie request by id."""
+def _make_tmdb_api_request(api_key='', url='', extra_params={}):
+    """Base API request."""
 
     params = {
         'api_key': api_key,
-        'language': 'ru',
+        'language': DEFAULT_LANGUAGE,
     }
-    movie_api_url = urljoin(BASE_API_URL, MOVIE_URL_PART)
+    params.update(extra_params)
 
     try:
         response = requests.get(
-            url=urljoin(movie_api_url, str(movie_id)),
+            url=url,
             params=params,
         )
         response.raise_for_status()
@@ -48,7 +50,35 @@ def get_movie(api_key='', movie_id=0):
     except requests.HTTPError as http_error:
         print(f'Connection problems {http_error}')
 
-    return response.json()
+    return response
+
+
+def get_movie(api_key='', movie_id=None):
+    """Get movie data requested by id and return response object."""
+
+    movie_api_url = urljoin(
+        urljoin(BASE_API_URL, MOVIE_URL_PART),
+        str(movie_id)
+    )
+
+    return _make_tmdb_api_request(
+        api_key=api_key,
+        url=movie_api_url
+    )
+
+
+def search_movies(api_key='', keyword=''):
+    """Search movies by keyword and return response object."""
+
+    extra_params = {
+        'query': keyword,
+    }
+
+    return _make_tmdb_api_request(
+        api_key=api_key,
+        url=MOVIE_SEARCH_URL,
+        extra_params=extra_params,
+    )
 
 
 def load_data(path):
