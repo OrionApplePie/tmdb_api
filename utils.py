@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import requests
 from requests.compat import urljoin
 
@@ -77,3 +79,18 @@ def get_recommendations(api_key='', movie_id=''):
         api_key=api_key,
         url=recomm_url,
     )
+
+
+def print_movies(movies=None):
+    """Print list of movies from dict."""
+    if movies is None:
+        print('No movies...')
+        return None
+
+    for movie in movies:
+        if movie['release_date']:
+            year = datetime.strptime(movie['release_date'], '%Y-%m-%d').year
+        else:
+            year = 'N/A'  #TODO: Add checking other fields
+
+        print(f'id={movie["id"]} - {movie["title"]} ({year}), popularity: {movie["popularity"]}')
