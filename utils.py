@@ -1,8 +1,3 @@
-import json
-import os
-import urllib.parse
-import urllib.request
-
 import requests
 from requests.compat import urljoin
 
@@ -12,22 +7,6 @@ DEFAULT_LANGUAGE = 'ru'
 BASE_API_URL = 'https://api.themoviedb.org/3/'
 MOVIE_URL_PART = 'movie/'
 MOVIE_SEARCH_URL = BASE_API_URL + 'search/movie/'
-
-
-def make_tmdb_api_request(method, api_key, extra_params=None):
-    extra_params = extra_params or {}
-    url = 'https://api.themoviedb.org/3%s' % method
-    params = {
-        'api_key': api_key,
-        'language': 'ru',
-    }
-    params.update(extra_params)
-    return load_json_data_from_url(url, params)
-
-def load_json_data_from_url(base_url, url_params):
-    url = '%s?%s' % (base_url, urllib.parse.urlencode(url_params))
-    response = urllib.request.urlopen(url).read().decode('utf-8')
-    return json.loads(response)
 
 
 def _make_tmdb_api_request(api_key='', url='', extra_params={}):
@@ -79,11 +58,3 @@ def search_movies(api_key='', keyword=''):
         url=MOVIE_SEARCH_URL,
         extra_params=extra_params,
     )
-
-
-def load_data(path):
-    if not os.path.exists(path):
-        return None
-    with open(path, mode='r', encoding='utf-8') as my_file:
-        films_data = json.load(my_file)
-        return films_data
