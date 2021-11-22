@@ -58,3 +58,22 @@ def search_movies(api_key='', keyword=''):
         url=MOVIE_SEARCH_URL,
         extra_params=extra_params,
     )
+
+
+def get_recommendations(api_key='', movie_id=''):
+    """Get recommended movies by movie."""
+
+    movie_api_url = urljoin(
+        urljoin(BASE_API_URL, MOVIE_URL_PART),
+        str(movie_id)
+    )
+
+    recomm_url = urljoin(
+        movie_api_url,
+        f'{movie_id}/recommendations'
+    )
+
+    return _make_tmdb_api_request(
+        api_key=api_key,
+        url=recomm_url,
+    )
