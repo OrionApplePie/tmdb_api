@@ -34,17 +34,21 @@ def _make_tmdb_api_request(api_key='', url='', extra_params={}):
     return response
 
 
-def get_movie(api_key='', movie_id=None):
+def get_movie(api_key='', movie_id=None, recomm=False):
     """Get movie data requested by id and return response object."""
 
     movie_api_url = urljoin(
         urljoin(BASE_API_URL, MOVIE_URL_PART),
         str(movie_id)
     )
+    extra_params = {
+            'append_to_response': 'recommendations',
+    } if recomm else {}
 
     return _make_tmdb_api_request(
         api_key=api_key,
-        url=movie_api_url
+        url=movie_api_url,
+        extra_params=extra_params,
     )
 
 
@@ -62,25 +66,6 @@ def search_movies(api_key='', keyword=''):
     )
 
 
-def get_recommendations(api_key='', movie_id=''):
-    """Get recommended movies by movie."""
-
-    movie_api_url = urljoin(
-        urljoin(BASE_API_URL, MOVIE_URL_PART),
-        str(movie_id)
-    )
-
-    recomm_url = urljoin(
-        movie_api_url,
-        f'{movie_id}/recommendations'
-    )
-
-    return _make_tmdb_api_request(
-        api_key=api_key,
-        url=recomm_url,
-    )
-
-
 def print_movies(movies=None):
     """Print list of movies from dict."""
     if movies is None:
@@ -91,6 +76,6 @@ def print_movies(movies=None):
         if movie['release_date']:
             year = datetime.strptime(movie['release_date'], '%Y-%m-%d').year
         else:
-            year = 'N/A'  #TODO: Add checking other fields
+            year = 'N/A'  #TODO: Add checking other fields, sort by popularity
 
         print(f'id={movie["id"]} - {movie["title"]} ({year}), popularity: {movie["popularity"]}')

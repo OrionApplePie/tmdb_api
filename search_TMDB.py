@@ -3,7 +3,7 @@ import sys
 
 from dotenv import load_dotenv
 
-from utils import get_movie, get_recommendations, print_movies, search_movies
+from utils import get_movie, print_movies, search_movies
 
 load_dotenv()
 
@@ -34,9 +34,10 @@ def main():
 
         if option == '2':
             movie_id = input('Enter movie id for search recommendations: ')
-            resp = get_recommendations(
+            resp = get_movie(
                 api_key=user_api_key,
                 movie_id=movie_id,
+                recomm=True,
             )
         if option == '3':
             movie_id = input('Enter movie id for detais: ')
@@ -53,8 +54,9 @@ def main():
             continue
 
         if 'results' in json_data:
-            movies = json_data['results']
-            print_movies(movies)
+            print_movies(json_data['results'])
+        elif 'recommendations' in json_data:
+            print_movies(json_data['recommendations']['results'])
         else:
             print((
                 f'Requested movie founded: {json_data["title"]},'
